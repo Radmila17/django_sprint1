@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% block title %}
-  {{ post.location }}. {{ post.date}}
+  {{ post.location }}. {{ post.date }}
 {% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <article>
-      {% include 'includes/information.html' %}        
-      <p>
-        {{ post.text|linebreaksbr}}
-      </p>          
-    </article>                
+      {% include 'includes/post_info.html' %}
+        {{ post.text|linebreaksbr }}
+      </p>
+    </article>
   </div>
  {% endblock %} 
