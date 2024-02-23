@@ -41,14 +41,12 @@ posts = [
                 Весь этот день я хлопотал  около вещей: укрывал и
                 укутывал их, чтобы не испортились от дождя.''',
     },
-] 
+]
 
 
-# Create your views here.
 def index(request):
     template_name = 'blog/index.html'
-    posts.reverse()
-    context = {'posts': ю}
+    context = {'posts': reversed(posts)}
     return render(request, template_name, context)
 
 
@@ -60,13 +58,11 @@ def post_detail(request, id):
 
 def category_posts(request, category_slug):
     template_name = 'blog/category.html'
-    posts_by_category = []
-    for post in posts:
-        if post['category'] == category_slug:
-            posts_by_category.append(post)
+    posts_by_category = [post for post in posts
+                         if post['category'] == category_slug]
 
     context = {
-        'posts_by_category': posts_by_category,
+        'posts': posts_by_category,
         'category_slug': category_slug,
     }
     return render(request, template_name, context)
