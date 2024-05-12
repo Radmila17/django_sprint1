@@ -1,69 +1,50 @@
 from django.shortcuts import render
+from blog.models import Post, Category
+from datetime import datetime
+from django.shortcuts import get_object_or_404
 
-posts = [
-    {
-        'id': 0,
-        'location': 'Остров отчаянья',
-        'date': '30 сентября 1659 года',
-        'category': 'travel',
-        'text': '''Наш корабль, застигнутый в открытом море
-                страшным штормом, потерпел крушение.
-                Весь экипаж, кроме меня, утонул; я же,
-                несчастный Робинзон Крузо, был выброшен
-                полумёртвым на берег этого проклятого острова,
-                который назвал островом Отчаяния.''',
-    },
-    {
-        'id': 1,
-        'location': 'Остров отчаянья',
-        'date': '1 октября 1659 года',
-        'category': 'not-my-day',
-        'text': '''Проснувшись поутру, я увидел, что наш корабль сняло
-                с мели приливом и пригнало гораздо ближе к берегу.
-                Это подало мне надежду, что, когда ветер стихнет,
-                мне удастся добраться до корабля и запастись едой и
-                другими необходимыми вещами. Я немного приободрился,
-                хотя печаль о погибших товарищах не покидала меня.
-                Мне всё думалось, что, останься мы на корабле, мы
-                непременно спаслись бы. Теперь из его обломков мы могли бы
-                построить баркас, на котором и выбрались бы из этого
-                гиблого места.''',
-    },
-    {
-        'id': 2,
-        'location': 'Остров отчаянья',
-        'date': '25 октября 1659 года',
-        'category': 'not-my-day',
-        'text': '''Всю ночь и весь день шёл дождь и дул сильный
-                порывистый ветер. 25 октября.  Корабль за ночь разбило
-                в щепки; на том месте, где он стоял, торчат какие-то
-                жалкие обломки,  да и те видны только во время отлива.
-                Весь этот день я хлопотал  около вещей: укрывал и
-                укутывал их, чтобы не испортились от дождя.''',
-    },
-]
+posts_query_set = Post.objects.select_related('location', 'author', 'category')
+categories_query_set = Category.objects.all()
 
 
 def index(request):
     template_name = 'blog/index.html'
-    context = {'posts': reversed(posts)}
+    posts = posts_query_set.filter(
+        pub_date__lt=datetime.now(),
+        is_published=True,
+        category__is_published=True,
+    ).order_by('-id')[0:5]
+    context = {'post_list': posts}
     return render(request, template_name, context)
 
 
 def post_detail(request, id):
     template_name = 'blog/detail.html'
-    context = {'post': posts[id]}
+    post_by_id = get_object_or_404(
+        posts_query_set.filter(
+            pub_date__lt=datetime.now(),
+            is_published=True,
+            category__is_published=True,
+        ), pk=id
+    )
+
+    context = {'post': post_by_id}
     return render(request, template_name, context)
 
 
 def category_posts(request, category_slug):
     template_name = 'blog/category.html'
-    posts_by_category = [
-        post for post in posts if post['category'] == category_slug
-    ]
+    posts_by_category = posts_query_set.filter(
+        is_published=True,
+        pub_date__lt=datetime.now(),
+        category__slug=category_slug,
+    )
+    category_of_posts = get_object_or_404(
+        categories_query_set.filter(slug=category_slug), is_published=True,
+    )
 
     context = {
-        'posts': posts_by_category,
-        'category_slug': category_slug,
+        'post_list': posts_by_category,
+        'category': category_of_posts,
     }
     return render(request, template_name, context)
