@@ -25,8 +25,13 @@ SECRET_KEY = 'django-insecure-dp!!fty@ydt58m)ptnci61-l9d*(^k*6^b6$p3z=-q2=eq98v@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    # Когда проект будет опубликован и станет доступен для пользователей,
+    # в этот список нужно будет добавить и адреса домена, где он будет размещён,
+    # например 'acme.not' и 'www.acme.not'
+] 
 
 # Application definition
 
