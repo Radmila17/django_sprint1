@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pages.apps.PagesConfig',
     'blog.apps.BlogConfig',
+    'core.apps.CoreConfig',
+    'django_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -119,7 +121,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -133,7 +135,16 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static_dev',
 ]
 
+LOGIN_REDIRECT_URL = 'blog:index'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# Указываем директорию, в которую будут сохраняться файлы писем:
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
